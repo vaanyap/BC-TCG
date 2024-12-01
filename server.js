@@ -6,7 +6,8 @@ const path = require('path');
 const router = require('./routes/index');
 const { auth } = require('express-openid-connect');
 
-dotenv.load();
+// Correct method to load environment variables
+dotenv.config();
 
 const app = express();
 
@@ -19,14 +20,14 @@ app.use(express.json());
 
 const config = {
   authRequired: false,
-  auth0Logout: true
+  auth0Logout: true,
+  secret: process.env.SECRET,  // Make sure to add secret here
+  clientID: process.env.CLIENT_ID, // If you're using these variables
+  clientSecret: process.env.CLIENT_SECRET,
+  baseURL: process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`,  // Add fallback URL if needed
 };
 
 const port = process.env.PORT || 3000;
-if (!config.baseURL && !process.env.BASE_URL && process.env.PORT && process.env.NODE_ENV !== 'production') {
-  config.baseURL = `http://localhost:${port}`;
-}
-
 app.use(auth(config));
 
 // Middleware to make the `user` object available for all views
